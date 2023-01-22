@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+I am practicing with React, Next.js and Material UI technologies. Trying to do something like this project [https://rickandmorty-angular.netlify.app/layout](https://rickandmorty-angular.netlify.app/layout) that have in Angular.
+
 ## Getting Started
 
 First, run the development server:
