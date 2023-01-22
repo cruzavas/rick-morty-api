@@ -1,11 +1,70 @@
+//"use client";
+
+import { useState, useEffect  } from 'react';
 import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
+import ImgCard from '@/components/imgCard';
+import { Grid, Pagination } from '@mui/material';
 
-const inter = Inter({ subsets: ['latin'] })
+import style from '../styles/Home.module.css'
 
+export interface Result {
+  id: number;
+  name: string;
+  status: string;
+  species: string;
+  gender: string;
+  image: string;
+  url: string;
+}
+
+export interface Info {
+  count: number;
+  pages: number;
+  next: string;
+  prev?: any;
+}
+
+// export const getStaticProps = async() => {
+//   async function getCharacters() {
+//     const res = await fetch('https://rickandmortyapi.com/api/character');
+//     const characters = await res.json();
+
+//     return characters;
+//   }
+
+//   const data = await getCharacters();
+
+//   return {
+//     props: { characters: data.results, info: data.info }
+//   };
+// }
+
+// export default function Home({ characters, info }: InferGetStaticPropsType<typeof getStaticProps>) {
 export default function Home() {
+  const [page, setPage] = useState(1);
+  const [info, setInfo] = useState(null);
+  const [characters, setCharacters] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true)
+    fetch(`https://rickandmortyapi.com/api/character?page=${page}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setInfo(data.info)
+        setCharacters(data.results)
+        console.log(info)
+        setLoading(false)
+      })
+  }, [page])
+
+  if (isLoading) return <p>Loading...</p>
+  if (!info) return <p>No profile data</p>
+
+  function handlePaginationChange(e, value) {
+    setPage(value);
+  }
+
   return (
     <>
       <Head>
@@ -14,110 +73,30 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
+      <header className={style.header}>
+        <h1>Personajes de Rick and Morty</h1>
+      </header>
+      <div className={style.root}>
+        <Pagination
+            count={info["pages"]}
+            variant='outlined'
+            color='primary'
+            className='pagination'
+            page={page}
+            onChange={handlePaginationChange}
           />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+          <Grid container spacing={3} sx={{margin: 0}}>
+            {
+              characters.map((character: Result) => (
+              <Grid item xs={12} sm={6} md={4} lg={4} className={style.cardGrid} key={ character.id }>
+                <ImgCard name={ character.name }
+                specie={ character.species }
+                image={ character.image } />
+              </Grid>
+            ))
+          }
+        </Grid>
+      </div>
     </>
   )
 }
