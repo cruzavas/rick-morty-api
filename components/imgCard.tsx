@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 const ImgCard = ({ name, specie, image }: { name: string, specie: string, image: string }) => {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345, padding: 0 }}>
       <CardMedia
         component="img"
         alt={ name }
@@ -24,8 +24,7 @@ const ImgCard = ({ name, specie, image }: { name: string, specie: string, image:
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button variant="contained" size="medium" sx={{backgroundColor: 'orangered'}}>Learn More</Button>
       </CardActions>
     </Card>
   )

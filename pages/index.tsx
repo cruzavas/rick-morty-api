@@ -3,7 +3,7 @@
 import { useState, useEffect  } from 'react';
 import Head from 'next/head'
 import ImgCard from '@/components/imgCard';
-import { Grid, Pagination } from '@mui/material';
+import { Grid, Pagination, Box, CircularProgress } from '@mui/material';
 
 import style from '../styles/Home.module.css'
 
@@ -46,20 +46,19 @@ export default function Home() {
   const [characters, setCharacters] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setLoading(true)
-    fetch(`https://rickandmortyapi.com/api/character?page=${page}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setInfo(data.info)
-        setCharacters(data.results)
-        console.log(info)
-        setLoading(false)
-      })
-  }, [page])
+  const getCharacters = async () => {
+    const res = await fetch(`https://rickandmortyapi.com/api/character?page=${page}`);
+    const data = await res.json();
 
-  if (isLoading) return <p>Loading...</p>
-  if (!info) return <p>No profile data</p>
+    setInfo(data.info);
+    setCharacters(data.results);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    getCharacters();
+  }, [page])
 
   function handlePaginationChange(e, value) {
     setPage(value);
@@ -77,25 +76,35 @@ export default function Home() {
         <h1>Personajes de Rick and Morty</h1>
       </header>
       <div className={style.root}>
-        <Pagination
-            count={info["pages"]}
-            variant='outlined'
-            color='primary'
-            className='pagination'
-            page={page}
-            onChange={handlePaginationChange}
-          />
-          <Grid container spacing={3} sx={{margin: 0}}>
-            {
-              characters.map((character: Result) => (
-              <Grid item xs={12} sm={6} md={4} lg={4} className={style.cardGrid} key={ character.id }>
-                <ImgCard name={ character.name }
-                specie={ character.species }
-                image={ character.image } />
-              </Grid>
-            ))
-          }
-        </Grid>
+        {
+          !info ? <h2>No profile data</h2> :
+          isLoading ? 
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box> :
+          <>
+            <Grid container spacing={0} sx={{margin: '2% 0 0 0'}}>
+              {
+                characters.map((character: Result) => (
+                <Grid item xs={12} sm={6} md={6} lg={4} className={style.cardGrid} key={ character.id }>
+                  <ImgCard name={ character.name }
+                  specie={ character.species }
+                  image={ character.image } />
+                </Grid>
+                ))
+              }
+            </Grid>
+            <Pagination
+              count={info["pages"]}
+              variant='outlined'
+              color='primary'
+              className='pagination'
+              page={page}
+              onChange={handlePaginationChange}
+              sx={{ margin: '2%'}}
+            />
+         </>
+        }
       </div>
     </>
   )
