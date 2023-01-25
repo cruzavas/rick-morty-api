@@ -5,8 +5,9 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import Link from 'next/link';
 
-const ImgCard = ({ name, specie, image }: { name: string, specie: string, image: string }) => {
+const ImgCard = ({ id, name, specie, image }: { id: number, name: string, specie: string, image: string }) => {
   return (
     <Card sx={{ maxWidth: 345, padding: 0 }}>
       <CardMedia
@@ -24,7 +25,9 @@ const ImgCard = ({ name, specie, image }: { name: string, specie: string, image:
         </Typography>
       </CardContent>
       <CardActions>
-        <Button variant="contained" size="medium" sx={{backgroundColor: 'orangered'}}>Learn More</Button>
+        <Button variant="contained" size="medium" sx={{backgroundColor: 'orangered'}}>
+          <Link href={`/character/${id}`} style={{color: 'white', textDecoration: 'none'}}>Learn More</Link>
+        </Button>
       </CardActions>
     </Card>
   )
