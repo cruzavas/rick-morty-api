@@ -1,39 +1,15 @@
 //"use client";
 
-import { useState, useEffect  } from 'react';
+import { useState, SetStateAction  } from 'react';
 import ImgCard from '@/components/imgCard';
 import { Grid, Pagination, Box, CircularProgress } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from "next/router";
-
+import { ICharacter } from '@/interfaces/ICharacter';
 import style from '../styles/Home.module.css'
-
-export interface Result {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  gender: string;
-  image: string;
-  url: string;
-}
-
-export interface Info {
-  count: number;
-  pages: number;
-  next: string;
-  prev?: any;
-}
-
-export interface Data {
-  info: Info,
-  results: Result[]
-}
 
 export default function Home() {
   const [page, setPage] = useState(1);
-  // const [info, setInfo] = useState(null);
-  // const [characters, setCharacters] = useState([]);
   const [isLoading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -55,7 +31,7 @@ export default function Home() {
   const info = data?.info;
   const characters = data?.results;
 
-  function handlePaginationChange(e, value) {
+  function handlePaginationChange(e: any, value: SetStateAction<number>) {
     setPage(value);
     router.push('/', undefined, { shallow: true });
   }
@@ -81,12 +57,9 @@ export default function Home() {
             />
             <Grid container spacing={0} sx={{margin: '2% 0 0 0'}}>
               {
-                characters.map((character: Result) => (
+                characters.map((character: ICharacter) => (
                 <Grid item xs={12} sm={6} md={6} lg={4} className={style.cardGrid} key={ character.id }>
-                  <ImgCard id={ character.id }
-                  name={ character.name }
-                  specie={ character.species }
-                  image={ character.image } />
+                  <ImgCard character={ character } />
                 </Grid>
                 ))
               }
