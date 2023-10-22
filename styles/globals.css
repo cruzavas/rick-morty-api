@@ -8,3 +8,8 @@
 .MuiCardActions-root {
     justify-content: center;
 }
+
+.root {
+    width: 80%;
+    margin: auto;
+}
